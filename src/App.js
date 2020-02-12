@@ -12,16 +12,27 @@ class BooksApp extends React.Component {
          * pages, as well as provide a good URL they can bookmark and share.
          */
         showSearchPage: false,
-        books: []
+        books: [],
+        updatedShelf: {}
     };
-    // "wantToRead", "currentlyReading"
+
     componentDidMount() {
-      BooksAPI.getAll().then((books) => {
-        this.setState({
-          books
+        BooksAPI.getAll().then((books) => {
+            this.setState({
+                books
+            })
         })
-      })
     }
+
+    updateBookStatus = (event, book) => {
+        BooksAPI.update(book, event.target.value).then(() => {
+            BooksAPI.getAll().then((books) => {
+                this.setState({
+                    books
+                })
+            })
+        })
+    };
 
     render() {
         return (
@@ -59,19 +70,25 @@ class BooksApp extends React.Component {
                                 <div className="bookshelf">
                                     <h2 className="bookshelf-title">Currently Reading</h2>
                                     <div className="bookshelf-books">
-                                        <BookList books={this.state.books} status="currentlyReading"/>
+                                        <BookList handleSelectChange={this.updateBookStatus}
+                                                  books={this.state.books}
+                                                  status="currentlyReading"/>
                                     </div>
                                 </div>
                                 <div className="bookshelf">
                                     <h2 className="bookshelf-title">Want to Read</h2>
                                     <div className="bookshelf-books">
-                                        <BookList books={this.state.books} status="read"/>
+                                        <BookList handleSelectChange={this.updateBookStatus}
+                                                  books={this.state.books}
+                                                  status="wantToRead"/>
                                     </div>
                                 </div>
                                 <div className="bookshelf">
                                     <h2 className="bookshelf-title">Read</h2>
                                     <div className="bookshelf-books">
-                                        <BookList books={this.state.books} status="wantToRead"/>
+                                        <BookList handleSelectChange={this.updateBookStatus}
+                                                  books={this.state.books}
+                                                  status="read"/>
                                     </div>
                                 </div>
                             </div>
