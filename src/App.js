@@ -25,13 +25,16 @@ class BooksApp extends React.Component {
     }
 
     updateBookStatus = (event, book) => {
-        BooksAPI.update(book, event.target.value).then(() => {
-            BooksAPI.getAll().then((books) => {
-                this.setState({
-                    books
+        const {value} = event.target;
+        if (value !== 'none') {
+            BooksAPI.update(book, event.target.value).then(() => {
+                BooksAPI.getAll().then((books) => {
+                    this.setState({
+                        books
+                    })
                 })
             })
-        })
+        }
     };
 
     render() {
