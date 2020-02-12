@@ -1,18 +1,37 @@
 import React, {Component} from 'react';
-import Book from "./Book";
 
 class BookList extends Component {
     render() {
-        const {books, status} = this.props;
+        const {books, status, handleSelectChange} = this.props;
         const filteredBooks = books.filter((c) => (c.shelf === status));
         return (
             <ol className="books-grid">
                 {filteredBooks.map((book, index) => (
                     <li key={index}>
-                        <Book
-                            bookUrl={book.imageLinks.smallThumbnail}
-                            bookTitle={book.title}
-                            bookAuthor={book.authors[0]}/>
+                        <div className="book">
+                            <div className="book-top">
+                                <div className="book-cover"
+                                     style={{
+                                         width: 128,
+                                         height: 193,
+                                         backgroundImage: `url(${book.imageLinks.smallThumbnail})`
+                                     }}></div>
+                                <div className="book-shelf-changer">
+                                    <select value={status} onChange={event => handleSelectChange(event, book)}>
+                                        <option value="move" disabled>Move to...</option>
+                                        <option
+                                            value="currentlyReading">Currently Reading
+                                        </option>
+                                        <option value="wantToRead">Want to Read
+                                        </option>
+                                        <option value="read">Read</option>
+                                        <option value="none">None</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="book-title">{book.title}</div>
+                            <div className="book-authors">{book.authors.join(", ")}</div>
+                        </div>
                     </li>
                 ))}
             </ol>
