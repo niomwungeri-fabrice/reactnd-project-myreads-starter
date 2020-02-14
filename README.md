@@ -6,10 +6,14 @@ Of course, you are free to start this project from scratch if you wish! Just be 
 
 ## TL;DR
 
-To get started developing right away:
 
-* install all project dependencies with `npm install`
-* start the development server with `npm start`
+## Getting Started
+```sh
+$ git clone https://github.com/niomwungeri-fabrice/reactnd-project-myreads-starter.git
+$ cd reactnd-project-myreads-starter
+$ yarn
+$ yarn start
+```
 
 ## What You're Getting
 ```bash

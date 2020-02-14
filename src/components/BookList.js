@@ -3,7 +3,7 @@ import React, {Component} from 'react';
 class BookList extends Component {
     render() {
         const {books, status, handleSelectChange} = this.props;
-        const filteredBooks = books.filter((c) => (c.shelf === status));
+        const filteredBooks = (status && books) ? books.filter((c) => (c.shelf === status)): books;
         return (
             <ol className="books-grid">
                 {filteredBooks.map((book, index) => (
@@ -17,7 +17,7 @@ class BookList extends Component {
                                          backgroundImage: `url(${book.imageLinks.smallThumbnail})`
                                      }}></div>
                                 <div className="book-shelf-changer">
-                                    <select value={status} onChange={event => handleSelectChange(event, book)}>
+                                    <select value={status||""} onChange={event => handleSelectChange(event, book)}>
                                         <option value="move" disabled>Move to...</option>
                                         <option
                                             value="currentlyReading">Currently Reading
@@ -30,7 +30,8 @@ class BookList extends Component {
                                 </div>
                             </div>
                             <div className="book-title">{book.title}</div>
-                            <div className="book-authors">{book.authors.join(", ")}</div>
+                            <div
+                                className="book-authors">{book.authors}</div>
                         </div>
                     </li>
                 ))}
