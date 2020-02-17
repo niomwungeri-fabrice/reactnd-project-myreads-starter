@@ -7,8 +7,7 @@ import {DebounceInput} from "react-debounce-input";
 class Search extends Component {
     state = {
         querySearch: '',
-        searchResults: [],
-        searchMonitor: false
+        searchResults: []
     };
 
     onInputChange = (value) => {
@@ -20,21 +19,22 @@ class Search extends Component {
 
         if (querySearch) {
             BooksAPI.search(querySearch.trim(), 20).then((results) => {
-                if (results) {
+                if (results && results.length) {
                     const searchResults = results.map((book) => this.updateShel(book));
-                    this.setState({searchResults, searchMonitor: false})
+                    this.setState({searchResults})
                 } else {
-                    this.setState({searchResults: [], searchMonitor: true})
+                    this.setState({searchResults: []})
                 }
             });
         } else {
-            this.setState({searchResults: [], searchMonitor: false})
+            this.setState({searchResults: []})
         }
     };
 
     updateShel = (book) => {
         book.shelf = 'none';
-        if (this.props.books) {
+        const {books} = this.props;
+        if (books && books.length) {
             const getBookShelves = this.props.books.filter((b) => b.id === book.id);
             if (getBookShelves.length) {
                 book.shelf = getBookShelves[0].shelf;
@@ -44,7 +44,7 @@ class Search extends Component {
     };
 
     render() {
-        const {searchResults, querySearch, searchMonitor} = this.state;
+        const {searchResults, querySearch} = this.state;
         const {handleUpdateBook} = this.props;
         return (
             <div className="app">
@@ -75,7 +75,7 @@ class Search extends Component {
                                 ))}
                             </ol>
                         )}
-                        {searchMonitor && (
+                        {(querySearch !== '' && searchResults.length === 0) && (
                             <h1>No results. Please try again!</h1>
                         )}
                     </div>

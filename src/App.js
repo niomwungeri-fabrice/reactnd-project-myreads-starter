@@ -18,33 +18,30 @@ class App extends Component {
     }
 
     updateBookStatus = (event, book) => {
-        const {value} = event.target;
-        if (value !== 'none') {
-            BooksAPI.update(book, event.target.value).then(() => {
-                BooksAPI.getAll().then((books) => {
-                    this.setState({
-                        books
-                    })
+        BooksAPI.update(book, event.target.value).then(() => {
+            BooksAPI.getAll().then((books) => {
+                this.setState({
+                    books
                 })
             })
-        }
+        })
     };
 
     render() {
         return (
             <Switch>
-                <Route exact path="/" render={() => (
+                <Route exact path="/">
                     <Home
                         books={this.state.books}
                         handleUpdateBook={this.updateBookStatus}
                     />
-                )}/>
-                <Route path="/search" render={() => (
+                </Route>
+                <Route path="/search">
                     <Search
                         books={this.state.books}
                         handleUpdateBook={this.updateBookStatus}
                     />
-                )}/>
+                </Route>
             </Switch>
         );
     }
