@@ -1,12 +1,24 @@
 import React from 'react'
 import '../App.css'
-import {withRouter} from "react-router-dom";
-import Book from "../components/Book";
+import {withRouter, Link} from "react-router-dom";
+import BookShelf from "../components/BookShelf";
 
-
+const SHELVES = [
+    {
+        title: 'Currently Reading',
+        id: 'currentlyReading'
+    },
+    {
+        title: 'Want To Read',
+        id: 'wantToRead'
+    },
+    {
+        title: 'Read',
+        id: 'read'
+    }
+];
 const Home = (props) => {
-    const {handleUpdateBook, books, history} = props;
-    const bookByShelves = (shelf)=>((shelf && books) ? books.filter((c) => (c.shelf === shelf)) : books);
+    const {handleUpdateBook, books} = props;
     return (
         <div className="list-books">
             <div className="list-books-title">
@@ -14,46 +26,18 @@ const Home = (props) => {
             </div>
             <div className="list-books-content">
                 <div>
-                    <div className="bookshelf">
-                        <h2 className="bookshelf-title">Currently Reading</h2>
-                        <div className="bookshelf-books">
-                            <ol className="books-grid">
-                                {bookByShelves('currentlyReading').map((book, index) => (
-                                    <li key={index}>
-                                        <Book book={book} shelf="currentlyReading" handleUpdateBook={handleUpdateBook}/>
-                                    </li>
-                                ))}
-                            </ol>
+                    {SHELVES.map(((shelf, i) => (
+                        <div key={i} className="bookshelf">
+                            <BookShelf books={books}
+                                       name={shelf.title}
+                                       shelfCode={shelf.id}
+                                       handleUpdateBook={handleUpdateBook}/>
                         </div>
-                    </div>
-                    <div className="bookshelf">
-                        <h2 className="bookshelf-title">Want to Read</h2>
-                        <div className="bookshelf-books">
-                            <ol className="books-grid">
-                                {bookByShelves('wantToRead').map((book, index) => (
-                                    <li key={index}>
-                                        <Book book={book} shelf="wantToRead" handleUpdateBook={handleUpdateBook}/>
-                                    </li>
-                                ))}
-                            </ol>
-                        </div>
-                    </div>
-                    <div className="bookshelf">
-                        <h2 className="bookshelf-title">Read</h2>
-                        <div className="bookshelf-books">
-                            <ol className="books-grid">
-                                {bookByShelves('read').map((book, index) => (
-                                    <li key={index}>
-                                        <Book book={book} shelf="read" handleUpdateBook={handleUpdateBook}/>
-                                    </li>
-                                ))}
-                            </ol>
-                        </div>
-                    </div>
+                    )))}
                 </div>
             </div>
             <div className="open-search">
-                <button onClick={() => history.push('/search')}>Add a book</button>
+                <Link to='/search'>Add a book</Link>
             </div>
         </div>
     )
