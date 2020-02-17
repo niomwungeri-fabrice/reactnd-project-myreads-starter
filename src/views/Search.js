@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import * as BooksAPI from '../BooksAPI'
-import BookList from "../components/BookList";
 import {withRouter} from "react-router-dom";
+import Book from "../components/Book";
+import * as BooksAPI from "../BooksAPI";
+import {DebounceInput} from "react-debounce-input";
 
 class Search extends Component {
     state = {
@@ -10,20 +11,36 @@ class Search extends Component {
         searchMonitor: false
     };
 
-    onInputChange = ({target: {value}}) => {
-        const {querySearch} = this.state;
-
+    onInputChange = (value) => {
         this.setState(() => ({
-            querySearch: value
+            querySearch: value.trim()
         }));
 
+        const {querySearch} = this.state;
+
         if (querySearch) {
-            BooksAPI.search(querySearch.trim()).then((results) => {
-                results.length > 0
-                    ? this.setState({searchResults: results, searchMonitor: false})
-                    : this.setState({searchResults: [], searchMonitor: true})
-            })
-        } else this.setState({searchResults: [], searchMonitor: false})
+            BooksAPI.search(querySearch.trim(), 20).then((results) => {
+                if (results) {
+                    const searchResults = results.map((book) => this.updateShel(book));
+                    this.setState({searchResults, searchMonitor: false})
+                } else {
+                    this.setState({searchResults: [], searchMonitor: true})
+                }
+            });
+        } else {
+            this.setState({searchResults: [], searchMonitor: false})
+        }
+    };
+
+    updateShel = (book) => {
+        book.shelf = 'none';
+        if (this.props.books) {
+            const getBookShelves = this.props.books.filter((b) => b.id === book.id);
+            if (getBookShelves.length) {
+                book.shelf = getBookShelves[0].shelf;
+            }
+        }
+        return book;
     };
 
     render() {
@@ -39,17 +56,24 @@ class Search extends Component {
                                 }}>Close
                         </button>
                         <div className="search-books-input-wrapper">
-                            <input value={querySearch}
-                                   onChange={this.onInputChange} type="text"
-                                   placeholder="Search by title or author"/>
+                            <DebounceInput
+                                minLength={2}
+                                debounceTimeout={500}
+                                type="text"
+                                placeholder="Search by title or author"
+                                value={querySearch}
+                                onChange={(event) => this.onInputChange(event.target.value)}/>
                         </div>
                     </div>
                     <div className="search-books-results">
                         {searchResults.length > 0 && (
-                            <BookList
-                                books={searchResults}
-                                handleSelectChange={handleUpdateBook}
-                            />
+                            <ol className="books-grid">
+                                {searchResults.map(book => (
+                                    <li key={book.id}>
+                                        <Book shelf={book.shelf} book={book} handleUpdateBook={handleUpdateBook}/>
+                                    </li>
+                                ))}
+                            </ol>
                         )}
                         {searchMonitor && (
                             <h1>No results. Please try again!</h1>

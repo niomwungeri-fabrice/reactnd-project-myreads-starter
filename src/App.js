@@ -13,9 +13,7 @@ class App extends Component {
 
     componentDidMount() {
         BooksAPI.getAll().then((books) => {
-            this.setState({
-                books
-            })
+            this.setState({books})
         })
     }
 
@@ -31,16 +29,17 @@ class App extends Component {
             })
         }
     };
+
     render() {
         return (
             <Switch>
-                <Route exact path="/" render={()=>(
+                <Route exact path="/" render={() => (
                     <Home
                         books={this.state.books}
                         handleUpdateBook={this.updateBookStatus}
                     />
                 )}/>
-                <Route path="/search" render={()=>(
+                <Route path="/search" render={() => (
                     <Search
                         books={this.state.books}
                         handleUpdateBook={this.updateBookStatus}
